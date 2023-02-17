@@ -57,19 +57,19 @@
 	holder.maxHealth += healthchange
 	holder.health += healthchange
 
-#define TRANSFER_RANDOMIZED(destination, source1, source2) \
-	if(prob(50)) { \
+#define TRANSFER_RANDOMIZED(destination, source1, source2, weight) \
+	if(prob(weight)) { \
 		destination = source1; \
 	} else { \
 		destination = source2; \
 	}
 
-/proc/transfer_randomized_list(list/destination, list/list1, list/list2)
+/proc/transfer_randomized_list_weighted(list/destination, list/list1, list/list2, weight)
 	if(list1.len >= list2.len)
 		for(var/key1 as anything in list1)
 			var/val1 = list1[key1]
 			var/val2 = list2[key1]
-			if(prob(50) && val1)
+			if(prob(weight) && val1)
 				destination[key1] = val1
 			else if(val2)
 				destination[key1] = val2
@@ -77,7 +77,7 @@
 		for(var/key2 as anything in list2)
 			var/val1 = list1[key2]
 			var/val2 = list2[key2]
-			if(prob(50) && val1)
+			if(prob(weight) && val1)
 				destination[key2] = val1
 			else if(val2)
 				destination[key2] = val2
@@ -87,12 +87,14 @@
 		return
 	var/old_size = destination.dna.features["body_size"]
 
-	TRANSFER_RANDOMIZED(destination.dna.blood_type, blood_type, second_set.blood_type)
-	TRANSFER_RANDOMIZED(destination.dna.skin_tone_override, skin_tone_override, second_set.skin_tone_override)
-	transfer_randomized_list(destination.dna.features, features, second_set.features)
-	transfer_randomized_list(destination.dna.temporary_mutations, temporary_mutations, second_set.temporary_mutations)
+	var/weight = rand(30, 70)
 
-	if(prob(50))
+	TRANSFER_RANDOMIZED(destination.dna.blood_type, blood_type, second_set.blood_type, weight)
+	TRANSFER_RANDOMIZED(destination.dna.skin_tone_override, skin_tone_override, second_set.skin_tone_override, weight)
+	transfer_randomized_list_weighted(destination.dna.features, features, second_set.features, weight)
+	transfer_randomized_list_weighted(destination.dna.temporary_mutations, temporary_mutations, second_set.temporary_mutations, weight)
+
+	if(prob(weight))
 		destination.set_species(species.type, FALSE)
 		destination.dna.species.say_mod = species.say_mod
 		destination.dna.custom_species = custom_species
