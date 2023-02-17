@@ -87,7 +87,7 @@
 		return
 	var/old_size = destination.dna.features["body_size"]
 
-	var/weight = rand(30, 70)
+	var/weight = pick(20, 80)
 
 	TRANSFER_RANDOMIZED(destination.dna.blood_type, blood_type, second_set.blood_type, weight)
 	TRANSFER_RANDOMIZED(destination.dna.skin_tone_override, skin_tone_override, second_set.skin_tone_override, weight)
